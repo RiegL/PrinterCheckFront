@@ -16,4 +16,5 @@ export const h1 = styled.h1`
 `;
 
 export const TP = styled(Typography)`
+ text-align: center;
 `;

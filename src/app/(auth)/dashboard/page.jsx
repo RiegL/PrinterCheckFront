@@ -1,13 +1,8 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { CategoriasCreate } from "../../../components/Categorias/CategoriasCreate";
-import { CategoriasUpdate } from "../../../components/Categorias/CategoriasUpdate";
-import { MetasCreate } from "../../../components/Metas/MetasCreate";
-import { MetasUpdate } from "../../../components/Metas/MetasUpdate";
-import { TransacoesCreate } from "../../../components/Transacoes/TransacoesCreate";
-import { TransacoesUpdate } from "../../../components/Transacoes/TransacoesUpdate";
+import Chart from "@/components/Charts";
+import Panel from "@/components/Panel"
 
 export const DashboardPage = () => {
 
@@ -24,6 +19,7 @@ export const DashboardPage = () => {
             headers: { Authorization: `Bearer ${token}` },
         }).then(response =>{
           setUser(response.data.data);
+         
         }).catch(error => {
             window.location.href = "/login";
         })
@@ -32,13 +28,9 @@ export const DashboardPage = () => {
 
   return (
     <div>
-      <h1>Dashboard</h1>
-      <CategoriasCreate />  
-      {/* <CategoriasUpdate categoriaId={1} /> */}
-      <MetasCreate />
-      {/* <MetasUpdate metaId={6}/> */}
-      {/* <TransacoesCreate/> */}
-      {/* <TransacoesUpdate metaId={9}/> */}
+      <h1>Olá, {user.name}</h1>
+      <Panel/>
+      <Chart/>
     </div>
   );
 };

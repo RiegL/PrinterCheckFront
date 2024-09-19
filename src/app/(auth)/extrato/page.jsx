@@ -4,7 +4,9 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { CategoriasCreate } from "../../../components/Categorias/CategoriasCreate";
-import { MetasCreate} from "../../../components/Metas/MetasCreate";
+import { MetasCreate} from "../../../components/Metas/MetasCreate"
+import {TransacoesCreate} from "../../../components/Printers/TransacoesCreate"
+import {PrintersList} from "../../../components/Printers/PrintersList"
 
 export const ExtratoPage = () => {
   const [user, setUser] = useState({
@@ -29,11 +31,15 @@ export const ExtratoPage = () => {
   }, []);
 
   return (
+    <>
     <div style={{ display: "flex", gap:'2%'}}>
-      <Button variant="contained" color="primary" type="submit">Nova Transação</Button>
+      <TransacoesCreate/>
       <CategoriasCreate/>
       <MetasCreate/>
     </div>
+    <PrintersList/>
+    </>
+   
   );
 };
 

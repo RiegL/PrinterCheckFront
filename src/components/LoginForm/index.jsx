@@ -53,7 +53,7 @@ export const LoginForm = () => {
       <styles.Form onSubmit={handleSubmit}>
         <Stack gap={2}>
           <styles.TP variant="h3" color="primary">
-            YOURfinance.io
+            PrintersCheck
           </styles.TP>
           <TextField
             onChange={(e) => setEmail(e.target.value)}
