@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { CategoriasCreate } from "../../../components/Categorias/CategoriasCreate";
 import { MetasCreate} from "../../../components/Metas/MetasCreate"
-import {TransacoesCreate} from "../../../components/Printers/TransacoesCreate"
+import {PrintersCreate} from "../../../components/Printers/PrintersCreate"
 import {PrintersList} from "../../../components/Printers/PrintersList"
 
-export const ExtratoPage = () => {
+export const PrintersPage = () => {
   const [user, setUser] = useState({
     id: null,
   });
-
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -30,12 +30,13 @@ export const ExtratoPage = () => {
       });
   }, []);
 
+
   return (
     <>
     <div style={{ display: "flex", gap:'2%'}}>
-      <TransacoesCreate/>
-      <CategoriasCreate/>
-      <MetasCreate/>
+      <PrintersCreate/>
+      {/* <CategoriasCreate/> */}
+      {/* <MetasCreate/> */}
     </div>
     <PrintersList/>
     </>
@@ -43,4 +44,4 @@ export const ExtratoPage = () => {
   );
 };
 
-export default ExtratoPage;
+export default PrintersPage;

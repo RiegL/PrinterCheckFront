@@ -10,22 +10,21 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import GridViewIcon from "@mui/icons-material/GridView";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { grey } from "@mui/material/colors";
-import { Divider, Link } from "@mui/material";
+import { Link } from "@mui/material";
 import { useRouter } from "next/navigation";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 
 const drawerWidth = 240;
 
 export default function Menu({ children }) {
-
   const router = useRouter();
-  const doLogout = () =>{
-    localStorage.removeItem('token')
-    router.push('/login')
-  }
-
+  const doLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -51,11 +50,15 @@ export default function Menu({ children }) {
             color: "#299D91",
             fontWeight: "bold",
             marginLeft: "24px",
+            display: "flex", // Alinha ícone e texto na horizontal
+            alignItems: "center", // Centraliza verticalmente
           }}
           variant="h5"
         >
-          YOURfinance.IO
-        </Typography>{" "}
+          PrintersCheck
+          <CheckCircleIcon sx={{ marginLeft: "5px" }} />{" "}
+          {/* Espaço entre o texto e o ícone */}
+        </Typography>
         <Box
           sx={{
             display: "flex",
@@ -118,7 +121,7 @@ export default function Menu({ children }) {
 
             <Link
               style={{ textDecoration: "none", color: "white" }}
-              href="/extrato"
+              href="/printers"
             >
               <ListItem disablePadding>
                 <ListItemButton
@@ -135,9 +138,9 @@ export default function Menu({ children }) {
                   }}
                 >
                   <ListItemIcon>
-                    <SwapHorizIcon sx={{ color: grey[50] }} />
+                    <LocalPrintshopIcon sx={{ color: grey[50] }} />
                   </ListItemIcon>
-                  <ListItemText primary="Extrato" />
+                  <ListItemText primary="Impressoras" />
                 </ListItemButton>
               </ListItem>
             </Link>

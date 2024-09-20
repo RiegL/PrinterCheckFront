@@ -1,12 +1,20 @@
 "use client";
 import { useState } from "react";
-import { Stack, TextField, IconButton, InputAdornment,Snackbar, Alert } from "@mui/material";
+import {
+  Stack,
+  TextField,
+  IconButton,
+  InputAdornment,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import axios from "axios";
 import * as styles from "./style";
-import sx from './styles.module.css'
+import sx from "./styles.module.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export const LoginForm = () => {
   const router = useRouter();
@@ -52,8 +60,18 @@ export const LoginForm = () => {
     <>
       <styles.Form onSubmit={handleSubmit}>
         <Stack gap={2}>
-          <styles.TP variant="h3" color="primary">
+          <styles.TP
+            variant="h3"
+            color="primary"
+            style={{
+              display: "flex", 
+              alignItems: "center",
+              justifyContent: "center"
+              
+            }}
+          >
             PrintersCheck
+            <CheckCircleIcon sx={{ marginLeft: "5px" }} fontSize="large" />{" "}
           </styles.TP>
           <TextField
             onChange={(e) => setEmail(e.target.value)}
@@ -95,7 +113,9 @@ export const LoginForm = () => {
             </styles.Button>
           </Stack>
           <Stack className={sx.border} alignItems="center">
-            <Link href="/register" passHref className={sx.buttonCreate}>Criar conta</Link>
+            <Link href="/register" passHref className={sx.buttonCreate}>
+              Criar conta
+            </Link>
           </Stack>
         </Stack>
       </styles.Form>

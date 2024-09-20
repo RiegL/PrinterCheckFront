@@ -28,7 +28,7 @@ export const PrintersList = () => {
         });
 
         const printersData = response.data;
-
+        // console.log( "impressoras aqui" ,response.data)
         setPrinters(printersData);
         setFilteredPrinters(printersData);
 
@@ -80,6 +80,14 @@ export const PrintersList = () => {
       {label}
     </div>
   );
+
+  const statusStyles = {
+    Todas: {},
+    Danificada: { backgroundColor: "#ffcccc" }, // Vermelho claro
+    Verificada: { backgroundColor: "#ffffcc" }, // Amarelo claro
+    "Pronta para Enviar": { backgroundColor: "#ccffcc" }, // Verde claro
+    Enviada: { backgroundColor: "#ccddff" }, // Azul claro
+  };
 
   return (
     <>
@@ -156,7 +164,7 @@ export const PrintersList = () => {
           <TableBody>
             {Array.isArray(filteredPrinters) && filteredPrinters.length > 0 ? (
               filteredPrinters.map((printer) => (
-                <TableRow key={printer.id}>
+                <TableRow key={printer.id} style={statusStyles[printer.status]}>
                   <TableCell>{printer.client}</TableCell>
                   <TableCell>{printer.serial_number}</TableCell>
                   <TableCell>{printer.etiquetas_inicial}</TableCell>
