@@ -15,7 +15,8 @@ import { grey } from "@mui/material/colors";
 import { Link } from "@mui/material";
 import { useRouter } from "next/navigation";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import BuildIcon from "@mui/icons-material/Build";
 
 const drawerWidth = 240;
 
@@ -95,32 +96,6 @@ export default function Menu({ children }) {
 
             <Link
               style={{ textDecoration: "none", color: "white" }}
-              href="/categoria"
-            >
-              <ListItem disablePadding>
-                <ListItemButton
-                  sx={{
-                    "&:hover": {
-                      backgroundColor: "#333",
-                    },
-                    "&:focus": {
-                      backgroundColor: "#444",
-                    },
-                    "&:active": {
-                      backgroundColor: "#555",
-                    },
-                  }}
-                >
-                  <ListItemIcon>
-                    <AccountBalanceWalletIcon sx={{ color: grey[50] }} />
-                  </ListItemIcon>
-                  <ListItemText primary="Categoria" />
-                </ListItemButton>
-              </ListItem>
-            </Link>
-
-            <Link
-              style={{ textDecoration: "none", color: "white" }}
               href="/printers"
             >
               <ListItem disablePadding>
@@ -141,6 +116,32 @@ export default function Menu({ children }) {
                     <LocalPrintshopIcon sx={{ color: grey[50] }} />
                   </ListItemIcon>
                   <ListItemText primary="Impressoras" />
+                </ListItemButton>
+              </ListItem>
+            </Link>
+
+            <Link
+              style={{ textDecoration: "none", color: "white" }}
+              href="/repair"
+            >
+              <ListItem disablePadding>
+                <ListItemButton
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#333",
+                    },
+                    "&:focus": {
+                      backgroundColor: "#444",
+                    },
+                    "&:active": {
+                      backgroundColor: "#555",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <BuildIcon sx={{ color: grey[50] }} />
+                  </ListItemIcon>
+                  <ListItemText primary="Reparo" />
                 </ListItemButton>
               </ListItem>
             </Link>

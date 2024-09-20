@@ -3,7 +3,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
-import { CategoriasCreate } from "../../../components/Categorias/CategoriasCreate";
 import { MetasCreate} from "../../../components/Metas/MetasCreate"
 import {PrintersCreate} from "../../../components/Printers/PrintersCreate"
 import {PrintersList} from "../../../components/Printers/PrintersList"
@@ -35,7 +34,7 @@ export const PrintersPage = () => {
     <>
     <div style={{ display: "flex", gap:'2%'}}>
       <PrintersCreate/>
-      {/* <CategoriasCreate/> */}
+      
       {/* <MetasCreate/> */}
     </div>
     <PrintersList/>

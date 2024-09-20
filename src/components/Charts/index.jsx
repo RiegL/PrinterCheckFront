@@ -3,101 +3,144 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import dayjs from "dayjs";
+import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-// Configurações do gráfico
-const chartSetting = {
-  margin: { top: 30, right: 30, bottom: 50, left: 120 }, // Margem do gráfico
-  width: 900,
-  height: 400,
-  sx: {
-    [`.${axisClasses.right} .${axisClasses.label}`]: {
-      transform: "translate(-20px, 0)", // Ajuste da posição do label do eixo Y
-    },
-  },
-};
+// Função para agrupar impressoras por status e ano
+const agruparPorStatusEAno = (printers, anoSelecionado) => {
+  const resumoStatus = {
+    Verificada: 0,
+    Danificada: 0,
+    "Pronta para Enviar": 0,
+    Enviada: 0,
+  };
 
-// Função para formatar os valores no gráfico para o formato de Real (R$)
-const valueFormatter = (value) =>
-  new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(value / 100); // Dividindo por 100 para converter centavos em reais
+  printers.forEach((printer) => {
+    const ano = new Date(printer.created_at).getFullYear(); // Extrai o ano da data
 
-// Função para agrupar transações por ano e somar receitas e despesas
-const agruparPorAno = (transacoes) => {
-  const resumoAnual = {};
-
-  transacoes.forEach((transacao) => {
-    const ano = dayjs(transacao.data).year(); // Extrair o ano da transação
-
-    if (!resumoAnual[ano]) {
-      // Inicializa o ano no objeto se ainda não existir
-      resumoAnual[ano] = { receita: 0, despesa: 0 };
-    }
-
-    // Verifica se a transação é uma Receita ou uma Despesa e soma os valores corretamente
-    if (transacao.tipo === "Receita") {
-      resumoAnual[ano].receita += transacao.valor || 0;
-    } else if (transacao.tipo === "Despesa") {
-      resumoAnual[ano].despesa += transacao.valor || 0;
+    if (ano === anoSelecionado && resumoStatus[printer.status] !== undefined) {
+      resumoStatus[printer.status] += 1; // Incrementa a contagem para o status
     }
   });
 
-  // Converte o objeto em um array de objetos para o gráfico
-  return Object.keys(resumoAnual).map((ano) => ({
-    ano: ano,
-    receita: resumoAnual[ano].receita,
-    despesa: resumoAnual[ano].despesa,
+  // Converte o objeto em um array para o gráfico
+  return Object.keys(resumoStatus).map((status) => ({
+    status,
+    quantidade: resumoStatus[status],
   }));
 };
 
 // Componente do gráfico
 export const Chart = () => {
-  const [transacoesChart, setTransacoesChart] = useState([]);
-  const [anos, setAnos] = useState([]);
+  const [printersChart, setPrintersChart] = useState([]);
+  const [anoSelecionado, setAnoSelecionado] = useState(
+    new Date().getFullYear()
+  );
+  const [anosDisponiveis, setAnosDisponiveis] = useState([]);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
 
   useEffect(() => {
-    const getTransacao = async () => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const getPrinters = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/transacoes", {
+        const response = await axios.get("http://localhost:8080/printers", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const transacoesData = response.data.data;
+        const printersData = response.data;
 
-        // Agrupa as transações por ano e soma receitas e despesas
-        const dataset = agruparPorAno(transacoesData);
+        // Extrai anos disponíveis
+        const anos = [
+          ...new Set(
+            printersData.map((printer) =>
+              new Date(printer.created_at).getFullYear()
+            )
+          ),
+        ].sort();
+        setAnosDisponiveis(anos);
 
-        setTransacoesChart(dataset); // Atualiza o dataset do gráfico
-
-        // Extrai os anos únicos e ordena
-        const anosDisponiveis = [...new Set(dataset.map((transacao) => transacao.ano))]
-          .sort((a, b) => a - b);
-
-        setAnos(anosDisponiveis); // Atualiza a lista de anos
+        // Agrupa as impressoras por status e ano
+        const dataset = agruparPorStatusEAno(printersData, anoSelecionado);
+        setPrintersChart(dataset);
       } catch (error) {
-        console.error("Erro ao buscar transações", error.message);
+        console.error("Erro ao buscar impressoras", error.message);
       }
     };
-    getTransacao();
-  }, []);
+    getPrinters();
+  }, [anoSelecionado]);
+
+  // Configurações do gráfico com dimensões dinâmicas
+  const chartSetting = {
+    margin: { top: 30, right: 30, bottom: 50 },
+    width: windowSize.width * 0.7, // 90% da largura da janela
+    height: windowSize.height * 0.5, // 60% da altura da janela
+    sx: {
+      [`.${axisClasses.right} .${axisClasses.label}`]: {
+        transform: "translate(-20px, 0)",
+      },
+    },
+  };
 
   return (
-    <div>
-      {transacoesChart.length > 0 ? (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div
+      style={{
+        display: "flex",
+        width: "100%",
+        justifyContent: "flex-start",
+      }}
+      >
+        <FormControl
+          variant="outlined"
+          sx={{ minWidth: 100, marginBottom: 2, marginTop: 4 }}
+        >
+          <InputLabel id="ano-select-label">Ano</InputLabel>
+          <Select
+            labelId="ano-select-label"
+            value={anoSelecionado}
+            onChange={(e) => setAnoSelecionado(Number(e.target.value))}
+            label="Ano"
+          >
+            {anosDisponiveis.map((ano) => (
+              <MenuItem key={ano} value={ano}>
+                {ano}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+
+      {printersChart.length > 0 ? (
         <BarChart
-          dataset={transacoesChart} // Dados dinâmicos do gráfico
-          xAxis={[{ scaleType: "band", dataKey: "ano" }]} // Configuração do eixo X
-          series={[
-            { dataKey: "receita", label: "Receita", valueFormatter }, // Série para receita
-            { dataKey: "despesa", label: "Despesa", valueFormatter }, // Série para despesa
-          ]}
-          {...chartSetting} // Aplicação das configurações do gráfico
+          dataset={printersChart}
+          xAxis={[{ scaleType: "band", dataKey: "status" }]}
+          series={[{ dataKey: "quantidade", label: "Quantidade" }]}
+          {...chartSetting}
         />
       ) : (
-        <p>Carregando dados...</p> // Renderiza algo enquanto os dados estão sendo carregados
+        <p>Carregando dados...</p>
       )}
     </div>
   );

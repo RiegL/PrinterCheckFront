@@ -28,7 +28,7 @@ export const PrintersList = () => {
         });
 
         const printersData = response.data;
-        // console.log( "impressoras aqui" ,response.data)
+        console.log( "impressoras aqui" ,response.data)
         setPrinters(printersData);
         setFilteredPrinters(printersData);
 

@@ -3,14 +3,18 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Card from "../Card";
 import axios from "axios";
-import AccountBalanceWalletRoundedIcon from "@mui/icons-material/AccountBalanceWalletRounded";
-import TrackChangesRoundedIcon from "@mui/icons-material/TrackChangesRounded";
-import SwapHorizRoundedIcon from "@mui/icons-material/SwapHorizRounded";
-import LocalAtmRoundedIcon from "@mui/icons-material/LocalAtmRounded";
+import PrintIcon from '@mui/icons-material/Print';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping';
+import CancelIcon from '@mui/icons-material/Cancel';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
 
-export const Panel = () => {
-  const [despesas, setDespesas] = useState(0);
-  const [receitas, setReceitas] = useState(0);
+export const  Panel = () => {
+  const [printers, setPrinters] = useState(0);
+  const [verificadas, setVerificadas] = useState(0);
+  const [danificadas, setDanificadas] = useState(0);
+  const [enviadas, setEnviadas] = useState(0);
+  const [finalizadas, setFinalizadas] = useState(0);
   const [saldo, setSaldo] = useState(0);
   const [progressoMeta, setProgressoMeta] = useState(0);
 
@@ -18,25 +22,17 @@ export const Panel = () => {
     const getTransacao = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/transacoes", {
+        const response = await axios.get("http://localhost:8080/printers", {
           headers: { Authorization: `Bearer ${token}` },
         });
-
-        const transacoesData = response.data.data;
-
-        const despesasTotal = transacoesData
-          .filter((transacao) => transacao.tipo === "Despesa")
-          .reduce((acc, curr) => acc + curr.valor / 100, 0); // Divide por 100
-
-        const receitasTotal = transacoesData
-          .filter((transacao) => transacao.tipo === "Receita")
-          .reduce((acc, curr) => acc + curr.valor / 100, 0); // Divide por 100
-
-        const saldoTotal = receitasTotal - despesasTotal;
-
-        setDespesas(despesasTotal);
-        setReceitas(receitasTotal);
-        setSaldo(saldoTotal);
+      
+        setPrinters(response.data.length);
+        // Contar status
+        setVerificadas(response.data.filter(p => p.status === 'Verificada').length);
+        setDanificadas(response.data.filter(p => p.status === 'Danificada').length);
+        setEnviadas(response.data.filter(p => p.status === 'Enviada').length);
+        setFinalizadas(response.data.filter(p => p.status === 'Pronta para Enviar').length);
+        console.log(response.data.status)
       } catch (error) {
         console.error("Erro ao buscar transações", error.message);
       }
@@ -51,62 +47,53 @@ export const Panel = () => {
     setProgressoMeta(progresso.toFixed(2)); 
   };//mando para a meta em porcentagem
 
-  const formatarMoeda = (valor) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(valor);
-  };
 
   return (
     <Box sx={{ display: "flex", justifyContent: "center", padding: "20px" }}>
       <Grid container spacing={3} sx={{ maxWidth: "100%" }}>
         <Grid item xs={12} sm={6}>
           <Card
-            icon={
-              <AccountBalanceWalletRoundedIcon
-                fontSize="large"
-                sx={{ color: "#299D91" }}
-              />
-            }
-            title="Saldo Atual"
-            value={formatarMoeda(saldo)}
+            icon={<PrintIcon fontSize="large" sx={{ color: "#299D91" }} />}
+            title="Total Impressoras"
+            value={printers}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Card
-            icon={
-              <SwapHorizRoundedIcon
-                fontSize="large"
-                sx={{ color: "#299D91" }}
-              />
-            }
-            title="Despesas"
-            value={formatarMoeda(despesas)}
+            icon={<FactCheckIcon fontSize="large" sx={{ color: "#299D91" }} />}
+            title="Verificadas"
+            value={verificadas}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Card
-            icon={
-              <LocalAtmRoundedIcon fontSize="large" sx={{ color: "#299D91" }} />
-            }
-            title="Receitas"
-            value={formatarMoeda(receitas)}
+            icon={<CancelIcon fontSize="large" sx={{ color: "red" }} />}
+            title="Danificadas"
+            value={danificadas}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
           <Card
-            icon={
-              <TrackChangesRoundedIcon
-                fontSize="large"
-                sx={{ color: "#299D91" }}
-              />
-            }
+            icon={<LocalShippingIcon fontSize="large" sx={{ color: "#299D91" }} />}
+            title="Enviadas"
+            value={enviadas}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Card
+            icon={<CheckCircleIcon fontSize="large" sx={{ color: "#299D91" }} />}
+            title="Finalizadas"
+            value={finalizadas}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          {/* <Card
+            icon={<CheckCircleIcon fontSize="large" sx={{ color: "#299D91" }} />}
             title="Metas"
             value={progressoMeta}
             isMeta
-            onMetaChange={handleMetaChange} // Passa a função de mudança de meta
-          />
+            onMetaChange={handleMetaChange}
+          /> */}
         </Grid>
       </Grid>
     </Box>

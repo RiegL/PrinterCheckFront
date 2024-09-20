@@ -19,7 +19,7 @@ export const DashboardPage = () => {
             headers: { Authorization: `Bearer ${token}` },
         }).then(response =>{
           setUser(response.data.data);
-         
+          console.log(response.data.data)
         }).catch(error => {
             window.location.href = "/login";
         })
