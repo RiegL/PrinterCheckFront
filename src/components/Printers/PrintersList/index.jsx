@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import dayjs from "dayjs";
 import { Select, MenuItem, InputLabel, FormControl } from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 
 // Função para listar impressoras
 export const PrintersList = () => {
@@ -173,6 +174,7 @@ export const PrintersList = () => {
                   <TableCell>
                     {new Date(printer.created_at).toLocaleDateString()}
                   </TableCell>
+                  <DeleteIcon color="error"/>
                 </TableRow>
               ))
             ) : (
