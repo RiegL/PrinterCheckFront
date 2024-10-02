@@ -82,6 +82,7 @@ const RepairCreate = () => {
           etiquetas_revisao: etiquetas_revisao, // ajuste conforme necessário
           repair_description: repairDescription,
           user_id: user.id, // ou pegue o ID do usuário autenticado
+          status: status
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -109,6 +110,34 @@ const RepairCreate = () => {
       });
     }
   };
+
+
+  const handAttPrinter = async (e)=> {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:8080/printers/${printer.id}`,
+        { status: status },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setAlertMessage({
+        show: true,
+        message: "Status da impressora atualizado com sucesso!",
+        severity: "success",
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar status da impressora", error.message);
+      setAlertMessage({
+        show: true,
+        message: "Erro ao atualizar status da impressora",
+        severity: "error",
+      });
+    }
+  }
+
 
   //pega o user atual
   useEffect(() => {
@@ -141,7 +170,11 @@ const RepairCreate = () => {
       </Box>
       {/* If a printer is found, display the repair form */}
       {printer && (
-        <form onSubmit={handRepair}>
+        <form onSubmit={async (e) => {
+          e.preventDefault();
+          await handRepair(e);  // Espera criar o reparo
+          await handAttPrinter(e); // Depois atualiza o status
+      }}>
           <h3>Iniciar Reparo para Impressora: {printer.serial_number}</h3>
           <Box mb={2}>
             <FormControl fullWidth>

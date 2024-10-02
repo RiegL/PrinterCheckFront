@@ -5,7 +5,6 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
 
-// Função para agrupar impressoras por status e ano
 const agruparPorStatusEAno = (printers, anoSelecionado) => {
   const resumoStatus = {
     Verificada: 0,
@@ -15,42 +14,44 @@ const agruparPorStatusEAno = (printers, anoSelecionado) => {
   };
 
   printers.forEach((printer) => {
-    const ano = new Date(printer.created_at).getFullYear(); // Extrai o ano da data
-
+    const ano = new Date(printer.created_at).getFullYear();
     if (ano === anoSelecionado && resumoStatus[printer.status] !== undefined) {
-      resumoStatus[printer.status] += 1; // Incrementa a contagem para o status
+      resumoStatus[printer.status] += 1;
     }
   });
 
-  // Converte o objeto em um array para o gráfico
   return Object.keys(resumoStatus).map((status) => ({
     status,
     quantidade: resumoStatus[status],
   }));
 };
 
-// Componente do gráfico
 export const Chart = () => {
   const [printersChart, setPrintersChart] = useState([]);
-  const [anoSelecionado, setAnoSelecionado] = useState(
-    new Date().getFullYear()
-  );
+  const [anoSelecionado, setAnoSelecionado] = useState(new Date().getFullYear());
   const [anosDisponiveis, setAnosDisponiveis] = useState([]);
   const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {
-    const handleResize = () => {
+    if (typeof window !== "undefined") {
       setWindowSize({
         width: window.innerWidth,
         height: window.innerHeight,
       });
-    };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+      const handleResize = () => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
   }, []);
 
   useEffect(() => {
@@ -63,7 +64,6 @@ export const Chart = () => {
 
         const printersData = response.data;
 
-        // Extrai anos disponíveis
         const anos = [
           ...new Set(
             printersData.map((printer) =>
@@ -73,7 +73,6 @@ export const Chart = () => {
         ].sort();
         setAnosDisponiveis(anos);
 
-        // Agrupa as impressoras por status e ano
         const dataset = agruparPorStatusEAno(printersData, anoSelecionado);
         setPrintersChart(dataset);
       } catch (error) {
@@ -83,11 +82,10 @@ export const Chart = () => {
     getPrinters();
   }, [anoSelecionado]);
 
-  // Configurações do gráfico com dimensões dinâmicas
   const chartSetting = {
     margin: { top: 30, right: 30, bottom: 50 },
-    width: windowSize.width * 0.7, // 90% da largura da janela
-    height: windowSize.height * 0.5, // 60% da altura da janela
+    width: windowSize.width * 0.7,
+    height: windowSize.height * 0.5,
     sx: {
       [`.${axisClasses.right} .${axisClasses.label}`]: {
         transform: "translate(-20px, 0)",
@@ -106,11 +104,11 @@ export const Chart = () => {
       }}
     >
       <div
-      style={{
-        display: "flex",
-        width: "100%",
-        justifyContent: "flex-start",
-      }}
+        style={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "flex-start",
+        }}
       >
         <FormControl
           variant="outlined"
